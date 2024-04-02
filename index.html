@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Weather App</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-image: url("./images/2148895325.jpg");
+        background-size: cover;
+      }
+
+      .search-container {
+        display: flex;
+        align-items: center;
+        background-color: #fff;
+        padding: 10px;
+        margin-top: 50px;
+        border-radius: 20px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        max-width: 300px; /* Decrease or increase the width as needed */
+        width: 100%;
+      }
+
+      input[type="text"] {
+        border: none;
+        outline: none;
+        padding: 10px;
+        font-size: 16px;
+        border-radius: 20px;
+        width: 100%;
+      }
+
+      button {
+        background-color: transparent;
+        border: none;
+        cursor: pointer;
+      }
+
+      .fa-search {
+        color: #666;
+        font-size: 18px;
+      }
+      .card {
+    padding: 5px;
+    margin: 5px;
+    width: 200px;
+    background-image: url('./images/artistic-blurry-colorful-wallpaper-background\ \(1\).jpg');
+      }
+     
+      
+     .cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center; /* Horizontal alignment */
+}
+
+.card {
+  flex: 1 1 200px; /* Flex property to make cards flexible */
+  margin: 5px;
+  background-image: url('./images/artistic-blurry-colorful-wallpaper-background (1).jpg');
+}
+    </style>
+  </head>
+  <body>
+    <div class="container mt-5">
+      <div class="search-container">
+        <input type="text" id="searchInput" placeholder="Enter City Name..." />
+        <button type="button" onclick="findDetails()" id="searchButton">
+          <i class="fa fa-search"></i>
+        </button>
+      </div>
+      <div id="weatherInfo" class="mt-3"></div>
+    </div>
+
+    <script>
+      async function findDetails() {
+        try {
+          const city = document.getElementById("searchInput").value;
+          const apiKey = "YOUR_API_KEY";
+          const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=dab3af44de7d24ae7ff86549334e45bd`;
+          const response = await fetch(url);
+          if (!response.ok) {
+            throw new Error("City not found");
+          }
+          const data = await response.json();
+          displayData(data);
+        } catch (error) {
+          console.error("Error:", error);
+          // Handle error here, e.g., display an error message to the user
+        }
+      }
+
+      function displayData(data) {
+        // Extract weather information
+        const temperature = (data.main.temp - 273.15).toFixed(1) + "°C";
+        const feelsLike = (data.main.feels_like - 273.15).toFixed(1) + "°C";
+        const pressure = data.main.pressure + " hPa";
+        const humidity = data.main.humidity + "%";
+        const windSpeed = data.wind.speed + " m/s";
+        const sunrise = new Date(data.sys.sunrise * 1000).toLocaleTimeString();
+        const sunset = new Date(data.sys.sunset * 1000).toLocaleTimeString();
+        const weatherMain = data.weather[0].main;
+        const weatherDescription = data.weather[0].description;
+
+        // Update card contents
+        document.getElementById("weatherInfo").innerHTML = `
+            <div class="conatiner cards">
+              <div class="card c1 m-3" >
+                <div class="card-body">
+                    <h5 class="card-title">Temperature</h5>
+                    <p class="card-text">${temperature}</p>
+                </div>
+                </div>
+                 <div class="card c1 m-3 " >
+                <div class="card-body">
+                    <h5 class="card-title">Feels Like</h5>
+                    <p class="card-text">${feelsLike}</p>
+                </div>
+                 </div>
+                 <div class="card c1 m-3" >
+                <div class="card-body">
+                    <h5 class="card-title">Pressure</h5>
+                    <p class="card-text">${pressure}</p>
+                </div>
+                 </div>
+                 <div class="card c1 m-3" >
+                <div class="card-body">
+                    <h5 class="card-title">Humidity</h5>
+                    <p class="card-text">${humidity}</p>
+                </div>
+                 </div>
+                 <div class="card c1 m-3" >
+                <div class="card-body">
+                    <h5 class="card-title">Wind Speed</h5>
+                    <p class="card-text">${windSpeed}</p>
+                </div>
+                 </div>
+                 <div class="card c1 m-3" >
+                <div class="card-body">
+                    <h5 class="card-title">Sunrise</h5>
+                    <p class="card-text">${sunrise}</p>
+                </div>
+                 </div>
+                 <div class="card c1 m-3" >
+                <div class="card-body">
+                    <h5 class="card-title">Sunset</h5>
+                    <p class="card-text">${sunset}</p>
+                </div>
+                 </div>
+                 <div class="card c1 m-3" >
+                <div class="card-body">
+                    <h5 class="card-title">Weather</h5>
+                    <p class="card-text">${weatherMain} - ${weatherDescription}</p>
+                </div>
+                 </div>
+                 </div>`;
+      }
+    </script>
+  </body>
+</html>
